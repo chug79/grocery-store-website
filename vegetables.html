@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vegetables — Groco</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/9.0.0/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- reuse same header as index.html -->
+<header class="header">
+    <a href="index.html" class="logo"><i class="fas fa-shopping-basket"></i> new city </a>
+
+    <nav class="navbar">
+        <a href="index.html#home">home</a>
+        <a href="index.html#products">products</a>
+        <a href="index.html#categories">categories</a>
+        <a href="index.html#review">review</a>
+    </nav>
+
+    <div class="icons">
+        <div class="fas fa-bars" id="menu-btn"></div>
+        <div class="fas fa-search" id="search-btn"></div>
+        <div class="fas fa-shopping-cart" id="cart-btn"></div>
+    </div>
+
+    <form action="" class="search-form">
+        <input type="search" id="search-box" placeholder="search here...">
+        <label for="search-box" class="fas fa-search"></label>
+    </form>
+
+    <div class="shopping-cart" id="shopping-cart">
+        <span id="cart-count" class="cart-count">0</span>
+        <div id="cart-items"></div>
+        <div class="total" id="cart-total">Total: $0.00</div>
+        <a href="https://wa.me/+923278641145" id="checkout-btn" class="btn" target="_blank" rel="noopener noreferrer">Checkout via WhatsApp</a>
+    </div>
+</header>
+
+  <section class="products" id="vegetables">
+    <h1 class="heading"></h1>
+    <div class="box-container" style="padding-top: 30px;">
+      <div class="box">
+        <img src="image/product-4.png" alt="">
+        <h3>fresh cabbage</h3>
+        <div class="price">$4.99</div>
+        <a href="#" class="btn add-to-cart" data-product-id="veg-1" data-product-name="Fresh Cabbage" data-product-price="4.99">Add to Cart</a>
+      </div>
+      <div class="box">
+        <img src="image/product-6.png" alt="">
+        <h3>fresh avocado</h3>
+        <div class="price">$5.49</div>
+        <a href="#" class="btn add-to-cart" data-product-id="veg-2" data-product-name="Fresh Avocado" data-product-price="5.49">Add to Cart</a>
+      </div>
+      <div class="box">
+        <img src="image/product-5.png" alt="">
+        <h3>fresh potato</h3>
+        <div class="price">$2.99</div>
+        <a href="#" class="btn add-to-cart" data-product-id="veg-3" data-product-name="Fresh Potato" data-product-price="2.99">Add to Cart</a>
+      </div>
+      <div class="box">
+        <img src="image/product-8.png" alt="">
+        <h3>green lemon</h3>
+        <div class="price">$3.99</div>
+        <a href="#" class="btn add-to-cart" data-product-id="veg-4" data-product-name="Green Lemon" data-product-price="3.99">Add to Cart</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/9.0.0/swiper-bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
