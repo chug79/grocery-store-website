@@ -22,6 +22,13 @@
     transition: all 0.2s linear;
 }
 
+/* Ensure media (images/videos) never overflow their containers on small screens */
+img, video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 html {
     font-size: 62.5%;
     overflow-x: hidden;
@@ -289,7 +296,9 @@ section {
 
 .home .content {
     text-align: center;
-    width: 60rem;
+    width: 100%;                 /* be fluid on small screens */
+    max-width: 60rem;           /* but limit width on larger screens */
+    padding: 0 2rem;            /* small horizontal padding so text doesn't touch edges */
 }
 
 .home .content h3 {
@@ -717,6 +726,26 @@ section {
         margin: 2rem 2.5rem;
         display: block;
     }
+
+    /* make home banner behave on tablets/phones */
+    .home {
+        background-attachment: scroll; /* disables fixed background which can cause issues/overflow on mobile */
+        padding-top: 6.5rem;
+        padding-bottom: 3rem;
+    }
+
+    .home .content {
+        max-width: 48rem; /* reduce the max width on narrower screens */
+        padding: 0 1.6rem;
+    }
+
+    .home .content h3 {
+        font-size: 2.4rem;
+    }
+
+    .home .content p {
+        font-size: 1.6rem;
+    }
 }
 
 @media (max-width:450px) {
@@ -731,6 +760,20 @@ section {
     }
     .footer .box-container .box .payment-img {
         margin: 2rem auto;
+    }
+
+    /* extra small phones: tighten banner content */
+    .home .content {
+        max-width: 36rem;
+        padding: 0 1.2rem;
+    }
+
+    .home .content h3 {
+        font-size: 2rem;
+    }
+
+    .home .content p {
+        font-size: 1.4rem;
     }
 }
 
