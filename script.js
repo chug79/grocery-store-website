@@ -1,5 +1,3 @@
-// ...existing code...
-
 document.addEventListener('DOMContentLoaded', () => {
     // Header UI elements (safe guards)
     const searchForm = document.querySelector('.search-form');
@@ -235,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ...existing code...
     // --- scroll fade-up animations (faster, exclude header controls) ---
     (function setupScrollAnimations() {
         const selectors = [
@@ -271,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
         nodes.slice(0, 200).forEach(n => obs.observe(n));
     })();
 
-// ...existing code...
 (function setupContactSend() {
     const contactMessage = document.getElementById('contact-message');
     const contactPhone = document.getElementById('contact-phone');
@@ -316,4 +312,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 15000);
     });
 })();
-// ...existing code...

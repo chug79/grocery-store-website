@@ -22,12 +22,7 @@
     transition: all 0.2s linear;
 }
 
-/* Ensure media (images/videos) never overflow their containers on small screens */
-/* img, video {
-    max-width: 100%;
-    height: auto;
-    display: block;
-} */
+
 
 html {
     font-size: 62.5%;
@@ -55,7 +50,6 @@ section {
 .heading span {
     background: var(--orange);
     color: #fff;
-    /* display: inline-block; */
     padding: 0.5rem 3rem;
     clip-path: polygon(100% 0, 93% 50%, 100% 99%, 0% 100%, 7% 50%, 0% 0%);
 }
@@ -245,9 +239,8 @@ section {
     margin: 1rem;    
 }
 
-/* #01752f */
 
-/* fade-up on scroll — faster */
+/* fade-up on scroll */
 .fade-up {
     opacity: 0;
     transform: translateY(16px);
@@ -420,7 +413,6 @@ section {
 }
 
 .products .box img {
-    /* width: 90%; */
     height: 20rem;
     object-fit: fill;
     border-radius: 0.6rem;
@@ -524,65 +516,6 @@ section {
     font-size: 1.7rem;
 }
 
-.blogs .box-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
-    gap: 1.5rem;
-}
-
-.blogs .box-container .box {
-    overflow: hidden;
-    border-radius: 0.5rem;
-    box-shadow: var(--box-shadow);
-    background: #fff;
-}
-
-.blogs .box-container .box img {
-    height: 25rem;
-    width: 100%;
-    object-fit: cover;
-}
-
-.blogs .box-container .box .content {
-    padding: 2rem;
-}
-
-.blogs .box-container .box .content .icons {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 1.5rem;
-    margin-bottom: 1rem;
-    border-bottom: var(--border);
-}
-
-.blogs .box-container .box .content a {
-    color: var(--light-color);
-    font-size: 1.5rem;
-}
-
-.blogs .box-container .box .content a:hover {
-    color: var(--black);
-}
-
-.blogs .box-container .box .content a i {
-    color: var(--orange);
-    padding-right: 0.5rem;
-}
-
-.blogs .box-container .box .content h3 {
-    line-height: 1.8;
-    color: var(--black);
-    font-size: 2.2rem;
-    padding: 0.5rem 0;
-}
-
-.blogs .box-container .box .content p {
-    line-height: 1.8;
-    color: var(--light-color);
-    font-size: 1.5rem;
-    padding: 0.5rem 0;
-}
 
 .footer {
     background: #fff;
