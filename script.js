@@ -53,14 +53,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // Swiper init (only if library loaded)
     if (typeof Swiper !== 'undefined') {
         try {
-            new Swiper(".product-slider", {
-                loop: true, spaceBetween: 20, autoplay: { delay: 3000, disableOnInteraction: false },
-                breakpoints: { 0: { slidesPerView: 1 }, 768: { slidesPerView: 2 }, 1020: { slidesPerView: 3 } }
+            // keep a map of containerElement -> Swiper instance so we can control autoplay from search
+            const swiperInstances = new Map();
+            // init each product slider individually and store instances
+            document.querySelectorAll('.product-slider').forEach((el) => {
+                try {
+                    const inst = new Swiper(el, {
+                        loop: true, spaceBetween: 20, autoplay: { delay: 3000, disableOnInteraction: false },
+                        breakpoints: { 0: { slidesPerView: 1 }, 768: { slidesPerView: 2 }, 1020: { slidesPerView: 3 } }
+                    });
+                    swiperInstances.set(el, inst);
+                } catch (err) { /* ignore per-instance errors */ }
             });
-            new Swiper(".review-slider", {
-                loop: true, spaceBetween: 20, autoplay: { delay: 3000, disableOnInteraction: false },
-                breakpoints: { 0: { slidesPerView: 1 }, 768: { slidesPerView: 2 }, 1020: { slidesPerView: 3 } }
+            // init review sliders too (store instances in the same map)
+            document.querySelectorAll('.review-slider').forEach((el) => {
+                try {
+                    const inst = new Swiper(el, {
+                        loop: true, spaceBetween: 20, autoplay: { delay: 3000, disableOnInteraction: false },
+                        breakpoints: { 0: { slidesPerView: 1 }, 768: { slidesPerView: 2 }, 1020: { slidesPerView: 3 } }
+                    });
+                    swiperInstances.set(el, inst);
+                } catch (err) { /* ignore per-instance errors */ }
             });
+
+            // expose swiperInstances for other code (used by search click handler below)
+            window.__productSwiperInstances = swiperInstances;
         } catch (e) { /* ignore if sliders not present */ }
     }
 
