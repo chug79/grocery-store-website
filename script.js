@@ -348,8 +348,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 item.addEventListener('click', (ev) => {
                     ev.preventDefault();
                     re.style.display = 'none';
-                    // scroll to product and highlight
-                    m.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // if product is inside a Swiper slider, try to stop autoplay and navigate to that slide
+                    try {
+                        const swiperMap = window.__productSwiperInstances;
+                        if (swiperMap && swiperMap.size > 0) {
+                            for (const [container, inst] of swiperMap.entries()) {
+                                if (container.contains(m.el)) {
+                                    // find slide index in this container's DOM slides
+                                    const slides = Array.from(container.querySelectorAll('.swiper-slide'));
+                                    const matchIndex = slides.findIndex(s => s.contains(m.el));
+                                    if (matchIndex >= 0) {
+                                        // stop autoplay (if available)
+                                        try { if (inst?.autoplay?.stop) inst.autoplay.stop(); else if (inst?.autoplayStop) inst.autoplayStop(); } catch (e) { /* ignore */ }
+                                        // prefer slideToLoop if available (handles looped sliders)
+                                        try {
+                                            if (typeof inst.slideToLoop === 'function') {
+                                                // slideToLoop expects the original slide index (not DOM index), so pass matchIndex and allow swiper to resolve
+                                                inst.slideToLoop(matchIndex, 600);
+                                            } else if (typeof inst.slideTo === 'function') {
+                                                inst.slideTo(matchIndex, 600);
+                                            }
+                                        } catch (e) { /* ignore navigation errors */ }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    } catch (e) { /* ignore any swiper control errors */ }
+
+                    // fallback behaviour: scroll to product and highlight
+                    try { m.el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { /* ignore */ }
                     highlightElement(m.el);
                 });
                 re.appendChild(item);
