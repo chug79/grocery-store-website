@@ -171,8 +171,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Product-only search ---
     const searchBox = document.getElementById('search-box');
     const productsContainer = document.querySelector('.products');
-
     let noResultsEl = null;
+    // in-memory product index for faster searching / results dropdown
+    const productIndex = [];
+    function buildProductIndex() {
+        const nodeList = Array.from(document.querySelectorAll('.products .box, .products .swiper-slide.box, .products .swiper-wrapper .box'))
+            .filter(b => !b.classList.contains('swiper-slide-duplicate'));
+        productIndex.length = 0;
+        nodeList.forEach((box, i) => {
+            const name = (box.querySelector('h3')?.textContent || '').trim();
+            const price = (box.querySelector('.price')?.textContent || '').trim();
+            const img = box.querySelector('img')?.getAttribute('src') || '';
+            const id = box.dataset.productId || box.dataset.id || ('p-' + i);
+            // store a combined normalized string for token matching
+            const combined = (name + ' ' + price).toLowerCase();
+            productIndex.push({ id, name, price, img, el: box, combined });
+        });
+    }
+    // build once on load
+    buildProductIndex();
     function createNoResultsMessage() {
         if (noResultsEl) return noResultsEl;
         noResultsEl = document.createElement('div');
@@ -185,8 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function filterProducts(query) {
-        const nodeList = document.querySelectorAll('.products .box, .products .swiper-slide.box, .products .swiper-wrapper .box');
-        const boxes = Array.from(nodeList).filter(b => !b.classList.contains('swiper-slide-duplicate'));
+        // use indexed list for consistent results
+        const boxes = productIndex.map(p => p.el);
         if (boxes.length === 0) {
             // nothing to search on this page
             if (productsContainer) {
@@ -197,11 +214,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let shown = 0;
+        // tokenized matching: every token in query must exist in product combined string
+        const tokens = (query || '').split(/\s+/).filter(Boolean);
         boxes.forEach(box => {
-            const name = (box.querySelector('h3')?.textContent) || '';
-            const price = (box.querySelector('.price')?.textContent) || '';
-            const combined = (name + ' ' + price).toLowerCase();
-            if (!query || combined.includes(query)) {
+            const idx = productIndex.findIndex(p => p.el === box);
+            const combined = idx >= 0 ? productIndex[idx].combined : (box.querySelector('h3')?.textContent || '').toLowerCase();
+            let match = true;
+            if (tokens.length > 0) {
+                match = tokens.every(tok => combined.includes(tok));
+            }
+            if (match) {
                 box.style.display = '';
                 shown++;
             } else {
@@ -224,11 +246,108 @@ document.addEventListener('DOMContentLoaded', () => {
         if (form) {
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                filterProducts((searchBox.value || '').trim().toLowerCase());
+                const q = (searchBox.value || '').trim().toLowerCase();
+                filterProducts(q);
+                showSearchResults(q);
             });
         }
+        // debounce helper to avoid running filter on every keystroke
+        function debounce(fn, wait) {
+            let t;
+            return function(...args) {
+                clearTimeout(t);
+                t = setTimeout(() => fn.apply(this, args), wait);
+            };
+        }
+
+        // results dropdown UI
+        let resultsEl = null;
+        function ensureResultsEl() {
+            if (resultsEl) return resultsEl;
+            const header = document.querySelector('.header') || document.body;
+            resultsEl = document.createElement('div');
+            resultsEl.id = 'search-results';
+            Object.assign(resultsEl.style, {
+                position: 'absolute',
+                top: '100%',
+                right: '2rem',
+                width: 'min(40rem, 92vw)',
+                background: '#fff',
+                boxShadow: '0 0.5rem 1rem rgba(0,0,0,0.12)',
+                borderRadius: '0.6rem',
+                padding: '0.6rem',
+                zIndex: 1200,
+                overflow: 'auto',
+                maxHeight: '50vh',
+                display: 'none'
+            });
+            header.appendChild(resultsEl);
+            // hide when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-form') && !e.target.closest('#search-btn') && !e.target.closest('#search-results')) {
+                    resultsEl.style.display = 'none';
+                }
+            });
+            return resultsEl;
+        }
+
+        function clearHighlight(el) {
+            if (!el) return;
+            el.style.transition = '';
+            el.style.background = '';
+            el.style.outline = '';
+        }
+
+        function highlightElement(el) {
+            if (!el) return;
+            el.style.transition = 'background 0.6s ease';
+            el.style.background = 'linear-gradient(90deg, rgba(1,117,47,0.06), rgba(1,117,47,0.04))';
+            setTimeout(() => clearHighlight(el), 2000);
+        }
+
+        function showSearchResults(query) {
+            const re = ensureResultsEl();
+            if (!query) { re.style.display = 'none'; return; }
+            const tokens = query.split(/\s+/).filter(Boolean);
+            const matches = productIndex.filter(p => tokens.every(tok => p.combined.includes(tok))).slice(0, 8);
+            re.innerHTML = '';
+            if (matches.length === 0) {
+                const el = document.createElement('div');
+                el.style.padding = '1rem';
+                el.style.color = 'var(--light-color, #666)';
+                el.textContent = 'No results';
+                re.appendChild(el);
+                re.style.display = 'block';
+                return;
+            }
+            matches.forEach(m => {
+                const item = document.createElement('a');
+                item.href = '#';
+                item.className = 'search-result-item';
+                item.dataset.searchId = m.id;
+                Object.assign(item.style, { display: 'flex', gap: '0.6rem', padding: '0.6rem', alignItems: 'center', borderRadius: '0.4rem', color: 'var(--black, #000)', textDecoration: 'none' });
+                item.innerHTML = `<img src="${m.img}" alt="" style="height:3.6rem;width:3.6rem;object-fit:cover;border-radius:.4rem">` +
+                    `<div style="flex:1"><div style="font-size:1.4rem">${m.name}</div><div style="font-size:1.2rem;color:var(--light-color)">${m.price}</div></div>`;
+                item.addEventListener('click', (ev) => {
+                    ev.preventDefault();
+                    re.style.display = 'none';
+                    // scroll to product and highlight
+                    m.el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    highlightElement(m.el);
+                });
+                re.appendChild(item);
+            });
+            re.style.display = 'block';
+        }
+
+        const handleInput = debounce((val) => {
+            filterProducts(val);
+            showSearchResults(val);
+        }, 180);
+
         searchBox.addEventListener('input', (e) => {
-            filterProducts(((e.target.value) || '').trim().toLowerCase());
+            const v = ((e.target.value) || '').trim().toLowerCase();
+            handleInput(v);
         });
     }
 });
