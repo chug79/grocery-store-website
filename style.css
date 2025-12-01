@@ -23,11 +23,11 @@
 }
 
 /* Ensure media (images/videos) never overflow their containers on small screens */
-img, video {
+/* img, video {
     max-width: 100%;
     height: auto;
     display: block;
-}
+} */
 
 html {
     font-size: 62.5%;
